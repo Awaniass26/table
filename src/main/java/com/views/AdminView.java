@@ -1,6 +1,8 @@
 package com.views;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 // AdminView.java
 import java.util.List;
 import java.util.Scanner;
@@ -28,86 +30,146 @@ public class AdminView {
     }
 
     public void afficherMenuAdmin() {
-        System.out.println("Menu Admin:");
-        System.out.println("1. Créer un cours");
-        System.out.println("2. Afficher les cours d'un niveau");
-        System.out.println("3. Créer une classe");
-        System.out.println("4. Planifier une session de cours");
-        System.out.println("5. Afficher les sessions d'un cours");
-        System.out.println("Choisissez une option:");
-        int choix = scanner.nextInt();
-        switch (choix) {
-            case 1:
-                creerCours();
-                break;
-            case 2:
-                afficherCoursParNiveau();
-                break;
-            case 3:
-                creerClasse();
-                break;
-            case 4:
-                planifierSession();
-                break;
-            case 5:
-                afficherSessionsParCours();
-                break;
-            default:
-                System.out.println("Option invalide");
+        boolean continueRunning = true;
+        while (continueRunning) {
+            System.out.println("Menu Admin:");
+            System.out.println("1. Créer un cours");
+            System.out.println("2. Afficher les cours d'un niveau");
+            System.out.println("3. Créer une classe");
+            System.out.println("4. Planifier une session de cours");
+            System.out.println("5. Afficher les sessions d'un cours");
+            System.out.println("6. Quitter");
+            System.out.print("Choisissez une option: ");
+            int choix = scanner.nextInt();
+            
+            switch (choix) {
+                case 1:
+                    creerCours();
+                    break;
+                case 2:
+                    afficherCoursParNiveau();
+                    break;
+                case 3:
+                    creerClasse();
+                    break;
+                case 4:
+                    planifierSession();
+                    break;
+                case 5:
+                    afficherSessionsParCours();
+                    break;
+                case 6:
+                    continueRunning = false;
+                    System.out.println("Au revoir !");
+                    break;
+                default:
+                    System.out.println("Option invalide, veuillez réessayer.");
+            }
         }
     }
 
     public void creerCours() {
-        System.out.println("Nom du cours:");
+        System.out.print("Nom du cours: ");
         String nom = scanner.next();
-        // Demander professeur et classes associés
-        // Exemple : ajouter un professeur et une liste de classes
-        System.out.println("Professeur:");
+        System.out.print("Professeur: ");
         String professeurNom = scanner.next();
         Professeur professeur = new Professeur(professeurNom, "Prenom");
-        System.out.println("Combien de classes ?");
+
+        System.out.print("Combien de classes ? ");
         int nbClasses = scanner.nextInt();
         List<Classe> classes = new ArrayList<>();
         for (int i = 0; i < nbClasses; i++) {
-            System.out.println("Nom de la classe " + (i+1) + ":");
+            System.out.print("Nom de la classe " + (i + 1) + ": ");
             String classeNom = scanner.next();
-            classes.add(new Classe(classeNom, new Niveau("Niveau1")));
+            classes.add(new Classe(classeNom, new Niveau("Niveau1"))); 
         }
+
         coursService.creerCours(nom, professeur, classes);
+        System.out.println("Cours créé avec succès !");
     }
 
     public void afficherCoursParNiveau() {
-        System.out.println("Nom du niveau:");
+        System.out.print("Nom du niveau: ");
         String niveauNom = scanner.next();
         Niveau niveau = new Niveau(niveauNom);
         List<Cours> coursList = coursService.afficherCoursParNiveau(niveau);
-        for (Cours cours : coursList) {
-            System.out.println("Cours: " + cours.getNom());
+
+        if (coursList.isEmpty()) {
+            System.out.println("Aucun cours trouvé pour ce niveau.");
+        } else {
+            for (Cours cours : coursList) {
+                System.out.println("Cours: " + cours.getNom());
+            }
         }
     }
 
     public void creerClasse() {
-        System.out.println("Nom de la classe:");
+        System.out.print("Nom de la classe: ");
         String nom = scanner.next();
-        // Créer la classe avec un niveau par défaut
         Classe classe = new Classe(nom, new Niveau("Niveau1"));
         classeService.creerClasse(nom, new Niveau("Niveau1"));
+        System.out.println("Classe créée avec succès !");
     }
 
     public void planifierSession() {
-        System.out.println("Nom du cours:");
+        System.out.print("Nom du cours: ");
         String nomCours = scanner.next();
         Cours cours = new Cours(nomCours, new Professeur("Professeur1", "Prenom"), new ArrayList<>());
-        // Ajouter détails de la session et planifier
+
+         System.out.print("Date de la session (format: yyyy-MM-dd): ");
+        String dateString = scanner.next();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = null;
+        try {
+            date = dateFormat.parse(dateString); 
+        } catch (Exception e) {
+            System.out.println("Erreur de format de date");
+            return;
+        }
+
+        System.out.print("Heure début (format: HH:mm): ");
+        String heureDebutString = scanner.next();
+        SimpleDateFormat heureFormat = new SimpleDateFormat("HH:mm");
+        Date heureDebut = null;
+        try {
+            heureDebut = heureFormat.parse(heureDebutString); 
+        } catch (Exception e) {
+            System.out.println("Erreur de format de l'heure de début");
+            return;
+        }
+
+        System.out.print("Heure fin (format: HH:mm): ");
+        String heureFinString = scanner.next();
+        Date heureFin = null;
+        try {
+            heureFin = heureFormat.parse(heureFinString); 
+        } catch (Exception e) {
+            System.out.println("Erreur de format de l'heure de fin");
+            return;
+        }
+
+        System.out.print("Salle: ");
+        String salle = scanner.next();
+
+        sessionService.planifierSession(cours, date, heureDebut, heureFin, salle);
+        System.out.println("Session planifiée avec succès !");
     }
 
     public void afficherSessionsParCours() {
-        System.out.println("Nom du cours:");
+        System.out.print("Nom du cours: ");
         String nomCours = scanner.next();
         Cours cours = new Cours(nomCours, new Professeur("Professeur1", "Prenom"), new ArrayList<>());
         List<Session> sessions = sessionService.afficherSessionsParCours(cours);
-        for (Session session : sessions) {
-            System.out.println("Session de " + session.getCours().getNom());
+        
+        if (sessions.isEmpty()) {
+            System.out.println("Aucune session trouvée pour ce cours.");
+        } else {
+            for (Session session : sessions) {
+                System.out.println("Session de " + session.getCours().getNom());
+                System.out.println("Date: " + session.getDate());
+                System.out.println("Heure: " + session.getHeureDebut() + " - " + session.getHeureFin());
+                System.out.println("Salle: " + session.getSalle());
+            }
         }
     }
 }
