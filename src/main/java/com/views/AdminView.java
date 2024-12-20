@@ -13,18 +13,23 @@ import com.entity.Professeur;
 import com.entity.Session;
 import com.services.ClasseService;
 import com.services.CoursService;
+import com.services.ProfesseurService;
 import com.services.SessionService;
 
 public class AdminView {
     private CoursService coursService;
     private ClasseService classeService;
     private SessionService sessionService;
+        private ProfesseurService professeurService; 
+
     private Scanner scanner;
 
-    public AdminView(CoursService coursService, ClasseService classeService, SessionService sessionService) {
+    public AdminView(CoursService coursService, ClasseService classeService, SessionService sessionService,ProfesseurService professeurService) {
         this.coursService = coursService;
         this.classeService = classeService;
         this.sessionService = sessionService;
+        this.professeurService = professeurService; 
+
         this.scanner = new Scanner(System.in);
     }
 
@@ -70,32 +75,41 @@ public class AdminView {
     public void creerCours() {
         System.out.print("Nom du cours: ");
         String nom = scanner.next();
-        System.out.print("Professeur (nom): ");
+        System.out.print("Professeur: ");
         String professeurNom = scanner.next();
-        
-        Professeur professeur = professeurRepository.findByName(professeurNom);
-        
+        Professeur professeur = professeurService.trouverProfesseurParNom(professeurNom);
         if (professeur == null) {
-            System.out.println("Professeur non trouvé, création d'un nouveau professeur.");
-            System.out.print("Prénom du professeur: ");
-            String prenomProfesseur = scanner.next();
-            professeur = new Professeur(0, professeurNom, prenomProfesseur);
-            professeurRepository.save(professeur); // Enregistrez le professeur dans la base de données
+            System.out.println("Professeur non trouvé. Veuillez l'ajouter d'abord.");
+            return;
         }
-        
         System.out.print("Combien de classes ? ");
         int nbClasses = scanner.nextInt();
         List<Classe> classes = new ArrayList<>();
         for (int i = 0; i < nbClasses; i++) {
             System.out.print("Nom de la classe " + (i + 1) + ": ");
             String classeNom = scanner.next();
-            classes.add(new Classe(classeNom, new Niveau("Niveau1")));
+            classes.add(new Classe(classeNom, new Niveau("Niveau1"))); 
         }
-    
+
         coursService.creerCours(nom, professeur, classes);
         System.out.println("Cours créé avec succès !");
     }
-    
+
+    public void afficherCoursParNiveau() {
+        System.out.print("Nom du niveau: ");
+        String niveauNom = scanner.next();
+        Niveau niveau = new Niveau(niveauNom);
+        List<Cours> coursList = coursService.afficherCoursParNiveau(niveau);
+
+        if (coursList.isEmpty()) {
+            System.out.println("Aucun cours trouvé pour ce niveau.");
+        } else {
+            for (Cours cours : coursList) {
+                System.out.println("Cours: " + cours.getNom());
+            }
+        }
+    }
+
     public void creerClasse() {
         System.out.print("Nom de la classe: ");
         String nom = scanner.next();

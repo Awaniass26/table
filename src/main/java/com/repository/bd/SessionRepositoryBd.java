@@ -2,7 +2,6 @@ package com.repository.bd;
 
 import com.entity.Session;
 import com.entity.Cours;
-import com.core.bd.Database;
 import com.core.bd.DatabaseImpl;
 import com.repository.SessionRepository;
 
