@@ -1,15 +1,5 @@
 package com.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode()
-
 public class Niveau {
     private String nom;
 
@@ -17,4 +7,8 @@ public class Niveau {
         this.nom = nom;
     }
 
+    public String getNom() {
+        return nom;
+    }
 }
+

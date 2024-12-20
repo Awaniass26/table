@@ -1,30 +1,19 @@
 package com.entity;
 
-
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
-@Getter
-@Setter
-@ToString
-@EqualsAndHashCode()
-
 public class Professeur {
     private String nom;
-    private String specialite;
+    private String prenom;
 
-    public Professeur(String nom, String specialite) {
+    public Professeur(String nom, String prenom) {
         this.nom = nom;
-        this.specialite = specialite;
+        this.prenom = prenom;
     }
 
-    public Professeur(String nom) {
-        this.nom = nom;
-        
+    public String getNom() {
+        return nom;
     }
 
-   
+    public String getPrenom() {
+        return prenom;
+    }
 }
-
