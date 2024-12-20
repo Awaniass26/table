@@ -1,25 +1,11 @@
 package com.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.entity.Cours;
 import com.entity.Session;
+import java.util.List;
 
-public class SessionRepository {
-    private List<Session> sessionList = new ArrayList<>();
+public interface SessionRepository {
 
-    public void save(Session session) {
-        sessionList.add(session);
-    }
-
-    public List<Session> findByCours(Cours cours) {
-        List<Session> result = new ArrayList<>();
-        for (Session session : sessionList) {
-            if (session.getCours().equals(cours)) {
-                result.add(session);
-            }
-        }
-        return result;
-    }
+    void save(Session session);  
+    List<Session> findByCours(Cours cours);  
 }

@@ -1,24 +1,25 @@
 package com;
 
-import com.repository.ClasseRepository;
-import com.repository.CoursRepository;
-import com.repository.SessionRepository;
-import com.services.ClasseService;
-import com.services.CoursService;
-import com.services.SessionService;
+import com.repository.bd.CoursRepositoryBd;
+import com.repository.bd.ClasseRepositoryBd;
+import com.repository.bd.SessionRepositoryBd;
+import com.services.impl.CoursServiceImpl;
+import com.services.impl.ClasseServiceImpl;
+import com.services.impl.SessionServiceImpl;
 import com.views.AdminView;
 
 public class Main {
     public static void main(String[] args) {
-        CoursRepository coursRepository = new CoursRepository();
-        ClasseRepository classeRepository = new ClasseRepository();
-        SessionRepository sessionRepository = new SessionRepository();
+        CoursRepositoryBd coursRepository = new CoursRepositoryBd();
+        ClasseRepositoryBd classeRepository = new ClasseRepositoryBd();
+        SessionRepositoryBd sessionRepository = new SessionRepositoryBd();
 
-        CoursService coursService = new CoursService(coursRepository);
-        ClasseService classeService = new ClasseService(classeRepository);
-        SessionService sessionService = new SessionService(sessionRepository);
+        CoursServiceImpl coursService = new CoursServiceImpl(coursRepository);
+        ClasseServiceImpl classeService = new ClasseServiceImpl(classeRepository);
+        SessionServiceImpl sessionService = new SessionServiceImpl(sessionRepository);
 
         AdminView adminView = new AdminView(coursService, classeService, sessionService);
+        
         adminView.afficherMenuAdmin();
     }
 }

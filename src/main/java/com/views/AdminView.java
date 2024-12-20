@@ -3,7 +3,6 @@ package com.views;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-// AdminView.java
 import java.util.List;
 import java.util.Scanner;
 
@@ -71,38 +70,32 @@ public class AdminView {
     public void creerCours() {
         System.out.print("Nom du cours: ");
         String nom = scanner.next();
-        System.out.print("Professeur: ");
+        System.out.print("Professeur (nom): ");
         String professeurNom = scanner.next();
-        Professeur professeur = new Professeur(professeurNom, "Prenom");
-
+        
+        Professeur professeur = professeurRepository.findByName(professeurNom);
+        
+        if (professeur == null) {
+            System.out.println("Professeur non trouvé, création d'un nouveau professeur.");
+            System.out.print("Prénom du professeur: ");
+            String prenomProfesseur = scanner.next();
+            professeur = new Professeur(0, professeurNom, prenomProfesseur);
+            professeurRepository.save(professeur); // Enregistrez le professeur dans la base de données
+        }
+        
         System.out.print("Combien de classes ? ");
         int nbClasses = scanner.nextInt();
         List<Classe> classes = new ArrayList<>();
         for (int i = 0; i < nbClasses; i++) {
             System.out.print("Nom de la classe " + (i + 1) + ": ");
             String classeNom = scanner.next();
-            classes.add(new Classe(classeNom, new Niveau("Niveau1"))); 
+            classes.add(new Classe(classeNom, new Niveau("Niveau1")));
         }
-
+    
         coursService.creerCours(nom, professeur, classes);
         System.out.println("Cours créé avec succès !");
     }
-
-    public void afficherCoursParNiveau() {
-        System.out.print("Nom du niveau: ");
-        String niveauNom = scanner.next();
-        Niveau niveau = new Niveau(niveauNom);
-        List<Cours> coursList = coursService.afficherCoursParNiveau(niveau);
-
-        if (coursList.isEmpty()) {
-            System.out.println("Aucun cours trouvé pour ce niveau.");
-        } else {
-            for (Cours cours : coursList) {
-                System.out.println("Cours: " + cours.getNom());
-            }
-        }
-    }
-
+    
     public void creerClasse() {
         System.out.print("Nom de la classe: ");
         String nom = scanner.next();
@@ -114,9 +107,9 @@ public class AdminView {
     public void planifierSession() {
         System.out.print("Nom du cours: ");
         String nomCours = scanner.next();
-        Cours cours = new Cours(nomCours, new Professeur("Professeur1", "Prenom"), new ArrayList<>());
+        Cours cours = new Cours(nomCours, new Professeur(0, "Professeur1", "Prenom"), new ArrayList<>());
 
-         System.out.print("Date de la session (format: yyyy-MM-dd): ");
+        System.out.print("Date de la session (format: yyyy-MM-dd): ");
         String dateString = scanner.next();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date date = null;
@@ -158,7 +151,7 @@ public class AdminView {
     public void afficherSessionsParCours() {
         System.out.print("Nom du cours: ");
         String nomCours = scanner.next();
-        Cours cours = new Cours(nomCours, new Professeur("Professeur1", "Prenom"), new ArrayList<>());
+        Cours cours = new Cours(nomCours, new Professeur(0, "Professeur1", "Prenom"), new ArrayList<>());
         List<Session> sessions = sessionService.afficherSessionsParCours(cours);
         
         if (sessions.isEmpty()) {
